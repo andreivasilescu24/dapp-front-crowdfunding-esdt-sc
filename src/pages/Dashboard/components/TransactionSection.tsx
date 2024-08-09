@@ -10,10 +10,14 @@ import axios from "axios"
 
 let ct = 0;
 
+//Adresa lui BOB
+const user = "erd1kyaqzaprcdnv4luvanah0gfxzzsnpaygsy6pytrexll2urtd05ts9vegu7";
+
 export const TransactionSection = () => {
   const [tx, setTx] = useState<Transaction>();
   const { pendingTransactionsArray } = useGetPendingTransactions();
 
+  
   const { address } = useGetAccount();
   const {tokenLogin } = useGetLoginInfo();
  const bearerToken = tokenLogin?.nativeAuthToken
@@ -22,10 +26,12 @@ export const TransactionSection = () => {
  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
   setUserInput(event.target.value);
  }
+  // Creează un state pentru fonduri
+  const [funds, setFunds] = useState<string | null>(null);
+
 
 
 //VIEW -URI 
-
 
  //FUNDS
  const viewFunds = async () => {
@@ -43,10 +49,12 @@ export const TransactionSection = () => {
   console.log("View funds: ")
   console.log(tx.data)
   setTx(Transaction.fromPlainObject(tx.data));
+  setFunds(tx.data.value);
  }
 
 
 //TARGET
+
  const viewTarget = async () => {
 
   console.log("Req view target: " + bearerToken)
@@ -66,6 +74,7 @@ export const TransactionSection = () => {
 
 
 //DEADLINE
+
  const viewDeadline = async () => {
 
   console.log("Req view deadline: " + bearerToken)
@@ -160,6 +169,25 @@ const viewStatus = async () => {
     setTx(txToSign);
   };
 
+  /*
+  const createTransactionFund = () => {
+    const txToSign = new Transaction({
+      sender: user,
+      receiver: address,
+      value: "0",
+      gasLimit: 100000n,
+      chainID: "D",
+      version: 0,
+      token_id: "EGLD",
+      token_nonce: 0,
+      token_amount: 1,
+     
+      data: Buffer.from(`Transaction ${ct++}`),
+    });
+    setTx(txToSign);
+  };
+ */
+
 
   const sendTransaction = async () => {
     if (!address || !tx) {
@@ -183,13 +211,13 @@ const viewStatus = async () => {
   }, [tx]);
 
   return (
-    <div className="w-1/2 flex flex-col p-6 rounded-xl bg-white">
+    <div className="w-1/2 flex flex-col p-9 rounded-xl bg-white">
       <h2 className="flex font-medium group text-sm">
         Create and send transaction
       </h2>
    
 
-
+{/* 
   {    <button
         onClick={createTransaction}
         className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
@@ -197,51 +225,49 @@ const viewStatus = async () => {
         Create transaction
       </button> }
 
-
+*/}
 
   <button
-        onClick={viewFunds}
-        className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
-      >
-      Funds
-      </button>
+    onClick={viewFunds}
+    className="w-36 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 my-2 rounded-full shadow-lg"
+  >
+    Funds
+  </button>
 
-      <button
-        onClick={viewTarget}
-        className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
-      >
-      Target
-      </button>
+  <button
+    onClick={viewTarget}
+    className="w-36 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 my-2 rounded-full shadow-lg"
+  >
+    Target
+  </button>
 
+  <button
+    onClick={viewDeadline}
+    className="w-36 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 my-2 rounded-full shadow-lg"
+  >
+    Deadline
+  </button>
 
-      <button
-        onClick={viewDeadline}
-        className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
-      >
-      Deadline
-      </button>
-     
-      <button
-        onClick={viewDeposit}
-        className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
-      >
-      Deposit
-      </button>
+  <button
+    onClick={viewDeposit}
+    className="w-36 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 my-2 rounded-full shadow-lg"
+  >
+    Deposit
+  </button>
 
-      <button
-        onClick={viewTokenID}
-        className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
-      >
-      TokenID
-      </button>
+  <button
+    onClick={viewTokenID}
+    className="w-36 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 my-2 rounded-full shadow-lg"
+  >
+    TokenID
+  </button>
 
-      <button
-        onClick={viewStatus}
-        className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
-      >
-      Status
-      </button>
-
+  <button
+    onClick={viewStatus}
+    className="w-36 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 my-2 rounded-full shadow-lg"
+  >
+    Status
+</button>
 
 
 
@@ -250,6 +276,8 @@ const viewStatus = async () => {
       <pre className="text-sm text-left">
         <code>{JSON.stringify(tx?.toPlainObject(), null, 2)}</code>
       </pre>
+
+      {/* 
       <button
         onClick={sendTransaction}
         className="w-96 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 my-2 rounded"
@@ -260,7 +288,7 @@ const viewStatus = async () => {
         ) : (
           <span>Send transaction</span>
         )}
-      </button>
+      </button>*/}
     </div>
   );
 };
